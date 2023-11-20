@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +29,7 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping("")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<MenuResponseDto> addMenu(@Valid @RequestPart("menu") MenuRequestDto menuRequestDto,
                                                    @RequestPart("imageFile") MultipartFile image,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -42,12 +44,14 @@ public class MenuController {
     }
 
     @GetMapping("/{menuId}")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<MenuResponseDto> getMenu(@PathVariable Long menuId) {
         MenuResponseDto menuResponseDto = menuService.getMenu(menuId);
         return ResponseEntity.status(HttpStatus.OK).body(menuResponseDto);
     }
 
     @PatchMapping("/{menuId}")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<MenuResponseDto> updateMenu(@PathVariable Long menuId,
                                                       @ModelAttribute MenuRequestDto menuRequestDto,
                                                       @RequestParam(value = "imageFile", required = false) MultipartFile image) throws IOException {
@@ -56,6 +60,7 @@ public class MenuController {
     }
 
     @DeleteMapping("/{menuId}")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId) {
         Long storeId = menuService.deleteMenu(menuId);
         URI storeUri = ServletUriComponentsBuilder.fromCurrentRequest()
