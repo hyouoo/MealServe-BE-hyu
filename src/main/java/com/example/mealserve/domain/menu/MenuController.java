@@ -6,6 +6,7 @@ import com.example.mealserve.domain.store.entity.Store;
 import com.example.mealserve.exception.CustomException;
 import com.example.mealserve.exception.ErrorCode;
 import com.example.mealserve.security.impl.UserDetailsImpl;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,13 @@ import java.io.IOException;
 import java.net.URI;
 
 @RestController
+@MultipartConfig
 @RequiredArgsConstructor
 @RequestMapping("/api/stores/menus")
 public class MenuController {
     private final MenuService menuService;
 
-    @PostMapping(value = "", consumes = "multipart/form-data")
+    @PostMapping("")
     public ResponseEntity<MenuResponseDto> addMenu(@Valid @RequestPart("menu") MenuRequestDto menuRequestDto,
                                                    @RequestPart("imageFile") MultipartFile image,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -35,7 +37,7 @@ public class MenuController {
             throw new CustomException(ErrorCode.STORE_NOT_FOUND);
         }
         menuRequestDto.updateImageFile(image);
-        MenuResponseDto menuResponseDto = menuService.addMenu(menuRequestDto, image, store.getId());
+        MenuResponseDto menuResponseDto = menuService.addMenu(menuRequestDto, store.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(menuResponseDto);
     }
 
