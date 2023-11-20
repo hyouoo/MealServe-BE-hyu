@@ -5,16 +5,36 @@ import com.example.mealserve.domain.customer.entity.Account;
 import com.example.mealserve.domain.customer.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
-    private AccountRepository accountRepository;
+
+    private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void registerNewAccount(AccountJoinRequestDto requestDto) {
-        Account account = requestDto.toEntity();
+        // 이메일 중복 확인
+        String email = requestDto.getEmail();
+        if (accountRepository.existsByEmail(requestDto.getEmail())) {
+            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+        }
+
+        // 비밀번호 인코딩
+        String password = passwordEncoder.encode(requestDto.getPassword());
+
+        Account account = Account.builder()
+                .email(email)
+                .password(password)
+                .phone(requestDto.getPhone())
+                .address(requestDto.getAddress())
+                .role(requestDto.getRole())
+                .build();
+
+        // 계정 저장
         accountRepository.save(account);
     }
 }

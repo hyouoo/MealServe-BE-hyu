@@ -2,6 +2,8 @@ package com.example.mealserve.domain.customer.controller;
 
 import com.example.mealserve.domain.customer.dto.AccountJoinRequestDto;
 import com.example.mealserve.domain.customer.service.AccountService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerAccount(@RequestBody AccountJoinRequestDto requestDto) {
