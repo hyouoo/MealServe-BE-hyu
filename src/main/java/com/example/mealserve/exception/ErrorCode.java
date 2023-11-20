@@ -13,16 +13,17 @@ public enum ErrorCode {
     PRODUCT_ALREADY_EXISTS(HttpStatus.CONTINUE.value(), "이미 등록된 물건입니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT.value(), "이미 등록된 이메일입니다."),
     INVALID_EMAIL_PASSWORD(HttpStatus.BAD_REQUEST.value(), "이메일 또는 비밀번호가 정확하지 않습니다."),
-    INVALID_DEPARTMENT(HttpStatus.BAD_REQUEST.value(), "존재하지 않는 부서입니다."),
-    INVALID_CATEGORY(HttpStatus.BAD_REQUEST.value(), "존재하지 않는 과목입니다."),
-    NOT_FOUND_MENU(HttpStatus.NOT_FOUND.value(), "해당 메뉴는 존재하지 않습니다."),
-    NOT_FOUND_STORE(HttpStatus.NOT_FOUND.value(), "해당 업소는 존재하지 않습니다."),
-    NOT_FOUND_USER(HttpStatus.NOT_FOUND.value(), "해당 사용자를 찾을 수 없습니다."),
-    NOT_FOUND_INSTRUCTOR(HttpStatus.NOT_FOUND.value(), "해당 강사를 찾을 수 없습니다"),
-    NOT_FOUND_COURSE(HttpStatus.NOT_FOUND.value(), "해당 강의를 찾을 수 없습니다"),
-    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND.value(), "해당 댓글을 찾을 수 없습니다."),
-    NOT_FOUND_CART(HttpStatus.NOT_FOUND.value(), "장바구니가 없습니다 관리자에게 문의하세요."),
-    NOT_FOUND_CARTITEM(HttpStatus.NOT_FOUND.value(), "장바구니에 아무것도 없습니다."),
+
+
+    STORE_ALREADY_EXISTS(HttpStatus.CONFLICT.value(), "상점이 이미 등록되어있습니다."),
+    MENU_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "이미 존재하는 메뉴입니다."),
+    MENU_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "등록되지 않은 메뉴입니다"),
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "먼저 업장등록을 해주세요"),
+    NEGATIVE_PRICE_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED.value(), "잘못된 가격표기법 입니다."),
+    IMAGE_UPLOAD_FAILED(HttpStatus.BAD_REQUEST.value(), "이미지 업로드 오류"),
+
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "해당 사용자를 찾을 수 없습니다."),
+
     PHONENUMBER_ALREADY_EXISTS(HttpStatus.CONTINUE.value(), "이미 등록된 전화번호입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED.value(), "토큰이 만료되었습니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED.value(), "리프레시 토큰이 만료되었습니다."),
