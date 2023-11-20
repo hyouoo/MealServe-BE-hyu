@@ -24,6 +24,6 @@ public class MenuRequestDto {
     private MultipartFile image;
 
     public void updateImageFile(MultipartFile imageFile) {
-        this.imageFile = imageFile;
+        this.image = imageFile;
     }
 }
