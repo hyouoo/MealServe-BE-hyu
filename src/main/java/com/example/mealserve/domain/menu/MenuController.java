@@ -62,8 +62,8 @@ public class MenuController {
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId) {
         Long storeId = menuService.deleteMenu(menuId);
-        URI storeUri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{storeId}")
+        URI storeUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/stores/{storeId}")
                 .buildAndExpand(storeId)
                 .toUri();
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(storeUri).build();
