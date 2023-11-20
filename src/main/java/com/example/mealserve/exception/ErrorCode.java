@@ -19,6 +19,7 @@ public enum ErrorCode {
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "등록되지 않은 메뉴입니다"),
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "먼저 업장등록을 해주세요"),
     NEGATIVE_PRICE_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED.value(), "잘못된 가격표기법 입니다."),
+    IMAGE_UPLOAD_FAILED(HttpStatus.BAD_REQUEST.value(), "이미지 업로드 오류"),
 
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "해당 사용자를 찾을 수 없습니다."),
     PHONENUMBER_ALREADY_EXISTS(HttpStatus.CONTINUE.value(), "이미 등록된 전화번호입니다."),
