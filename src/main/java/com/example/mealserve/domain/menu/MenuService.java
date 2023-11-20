@@ -23,10 +23,10 @@ public class MenuService {
     private final S3Upload s3Upload;
 
     @Transactional
-    public MenuResponseDto addMenu(MenuRequestDto menuRequestDto, MultipartFile image, Long storeId) throws IOException {
+    public MenuResponseDto addMenu(MenuRequestDto menuRequestDto, Long storeId) throws IOException {
         Store store = validateStoreById(storeId);
         validateMenuByName(menuRequestDto.getName());
-        String imageUrl = uploadImage(image);
+        String imageUrl = uploadImageToS3(menuRequestDto.getImage());
         Menu menu = Menu.of(
                 menuRequestDto.getName(),
                 menuRequestDto.getPrice(),
@@ -46,7 +46,7 @@ public class MenuService {
     @Transactional
     public MenuResponseDto updateMenu(Long menuId, MenuRequestDto menuRequestDto, MultipartFile image) throws IOException {
         Menu menu = validateMenuByIdAndGetMenu(menuId);
-        String imageUrl = uploadImage(image);
+        String imageUrl = uploadImageToS3(image);
         menu.updateMenuDetail(menuRequestDto.getName(), menuRequestDto.getPrice(), imageUrl);
         Menu updateMenu = menuRepository.save(menu);
         return new MenuResponseDto(updateMenu);
@@ -61,12 +61,11 @@ public class MenuService {
     }
 
     //이미지 업로드
-    private String uploadImage(MultipartFile image) throws IOException {
-        String imageUrl = null;
-        if (image != null && !image.isEmpty()) {
-            imageUrl = s3Upload.upload(image);
+    private String uploadImageToS3(MultipartFile image) throws IOException {
+        if (image == null || image.isEmpty()) {
+            throw new CustomException(ErrorCode.ELEMENTS_IS_REQUIRED); // 혹은 기본 이미지 URL을 반환
         }
-        return imageUrl;
+        return s3Upload.upload(image);
     }
 
     //메뉴 중복 검사
