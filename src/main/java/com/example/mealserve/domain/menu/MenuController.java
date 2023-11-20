@@ -44,7 +44,6 @@ public class MenuController {
     }
 
     @GetMapping("/{menuId}")
-    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<MenuResponseDto> getMenu(@PathVariable Long menuId) {
         MenuResponseDto menuResponseDto = menuService.getMenu(menuId);
         return ResponseEntity.status(HttpStatus.OK).body(menuResponseDto);
