@@ -1,5 +1,6 @@
 package com.example.mealserve.domain.customer.entity;
 
+import com.example.mealserve.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Account {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accountId;
+    private Long id;
 
     private String email;
     private String password;
@@ -21,6 +22,9 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     private RoleTypeEnum role;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Store store;
 
     @Builder
     public Account(String email,
@@ -33,7 +37,7 @@ public class Account {
         this.phone = phone;
         this.address = address;
         this.role = role;
-        this.point = role == RoleTypeEnum.Customer ? 1000000L : 0L;
+        this.point = role == RoleTypeEnum.CUSTOMER ? 1000000L : 0L;
 
     }
 }

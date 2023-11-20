@@ -1,9 +1,10 @@
 package com.example.mealserve.domain.order;
 
+import com.example.mealserve.domain.customer.entity.Account;
 import com.example.mealserve.domain.order.dto.OrderListResponseDto;
 import com.example.mealserve.domain.order.dto.OrderRequestDto;
 import com.example.mealserve.domain.order.dto.OrderResponseDto;
-import com.example.mealserve.domain.owner.entity.Account;
+
 import com.example.mealserve.global.tool.LoginAccount;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

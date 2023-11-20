@@ -1,5 +1,6 @@
 package com.example.mealserve.domain.store.entity;
 
+import com.example.mealserve.domain.customer.entity.Account;
 import com.example.mealserve.domain.menu.entity.Menu;
 import com.example.mealserve.domain.store.dto.StoreRequestDto;
 import com.example.mealserve.domain.store.dto.StoreResponseDto;
@@ -28,6 +29,10 @@ public class Store {
 
     @Column(nullable = false)
     private String tel;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")

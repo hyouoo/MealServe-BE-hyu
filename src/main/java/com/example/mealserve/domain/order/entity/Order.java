@@ -1,7 +1,7 @@
 package com.example.mealserve.domain.order.entity;
 
+import com.example.mealserve.domain.customer.entity.Account;
 import com.example.mealserve.domain.menu.entity.Menu;
-import com.example.mealserve.domain.owner.entity.Account;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
-@Table(name = "order")
+@Table(name = "`order`")
 public class Order extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

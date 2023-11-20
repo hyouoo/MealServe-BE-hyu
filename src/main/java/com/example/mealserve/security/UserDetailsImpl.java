@@ -1,6 +1,7 @@
 package com.example.mealserve.security;
 
 import com.example.mealserve.domain.customer.entity.Account;
+import com.example.mealserve.domain.store.entity.Store;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +31,11 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public Long getUserId() {
-        return account.getAccountId();
+        return account.getId();
+    }
+
+    public Store getStore() {
+        return account.getStore();
     }
 
     @Override

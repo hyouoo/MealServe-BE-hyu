@@ -1,10 +1,10 @@
 package com.example.mealserve.security.config;
 
 import com.example.mealserve.domain.customer.repository.AccountRepository;
+import com.example.mealserve.security.JwtAuthenticationFilter;
+import com.example.mealserve.security.JwtAuthorizationFilter;
+import com.example.mealserve.security.JwtUtil;
 import com.example.mealserve.security.UserDetailsServiceImpl;
-import com.example.mealserve.security.jwt.JwtAuthenticationFilter;
-import com.example.mealserve.security.jwt.JwtAuthorizationFilter;
-import com.example.mealserve.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

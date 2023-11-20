@@ -5,7 +5,7 @@ import com.example.mealserve.domain.menu.dto.MenuResponseDto;
 import com.example.mealserve.domain.store.entity.Store;
 import com.example.mealserve.exception.CustomException;
 import com.example.mealserve.exception.ErrorCode;
-import com.example.mealserve.security.impl.UserDetailsImpl;
+import com.example.mealserve.security.UserDetailsImpl;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

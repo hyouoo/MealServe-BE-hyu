@@ -1,7 +1,7 @@
 package com.example.mealserve.domain.order.dto;
 
+import com.example.mealserve.domain.customer.entity.Account;
 import com.example.mealserve.domain.order.entity.DeliverStatus;
-import com.example.mealserve.domain.owner.entity.Account;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;

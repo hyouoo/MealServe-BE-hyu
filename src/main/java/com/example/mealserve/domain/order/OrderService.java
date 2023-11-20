@@ -1,5 +1,6 @@
 package com.example.mealserve.domain.order;
 
+import com.example.mealserve.domain.customer.entity.Account;
 import com.example.mealserve.domain.menu.MenuRepository;
 import com.example.mealserve.domain.menu.entity.Menu;
 import com.example.mealserve.domain.order.dto.OrderDto;
@@ -7,7 +8,6 @@ import com.example.mealserve.domain.order.dto.OrderListResponseDto;
 import com.example.mealserve.domain.order.dto.OrderRequestDto;
 import com.example.mealserve.domain.order.dto.OrderResponseDto;
 import com.example.mealserve.domain.order.entity.Order;
-import com.example.mealserve.domain.owner.entity.Account;
 import com.example.mealserve.domain.store.StoreRepository;
 import com.example.mealserve.domain.store.entity.Store;
 import com.example.mealserve.exception.CustomException;
@@ -36,9 +36,9 @@ public class OrderService {
         int totalPrice = 0;
 
         for (OrderRequestDto requestDto : requestDtoList) {
-            Menu menu = menuRepository.findByIdAndStoreId(storeId, requestDto.getMenuId())
+            Menu menu = (Menu) menuRepository.findByIdAndStoreId(storeId, requestDto.getMenuId())
                     .orElseThrow(() ->
-                            new CustomException(ErrorCode.NOT_FOUND_MENU));
+                            new CustomException(ErrorCode.MENU_NOT_FOUND));
             Order newOrder = Order.from(account, menu, requestDto.getQuantity());
             orderRepository.save(newOrder);
 
@@ -53,8 +53,8 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderListResponseDto> getOrders(Account acccount) {
-        Store store = findStore(acccount.getStore().getId());
+    public List<OrderListResponseDto> getOrders(Account account) {
+        Store store = findStore(account.getStore().getId());
         List<Order> orders = orderRepository.findAllByStoreId(store.getId());
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<OrderListResponseDto> orderListResponseDtos = new ArrayList<>();
@@ -81,6 +81,6 @@ public class OrderService {
     private Store findStore(Long id) {
         return storeRepository.findById(id)
                 .orElseThrow(() ->
-                        new CustomException(ErrorCode.NOT_FOUND_STORE));
+                        new CustomException(ErrorCode.STORE_NOT_FOUND));
     }
 }

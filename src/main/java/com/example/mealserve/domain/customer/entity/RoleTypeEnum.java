@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum RoleTypeEnum {
-    Customer(Authority.Customer),
-    Owner(Authority.Owner);
+    CUSTOMER(Authority.CUSTOMER),
+    OWNER(Authority.OWNER);
 
     private final String authority;
 
@@ -14,8 +14,8 @@ public enum RoleTypeEnum {
     }
 
     public static class Authority {
-        public static final String Customer = "ROLE_Customer";
-        public static final String Owner = "ROLE_Owner";
+        public static final String CUSTOMER = "ROLE_Customer";
+        public static final String OWNER = "ROLE_Owner";
 
     }
 }
