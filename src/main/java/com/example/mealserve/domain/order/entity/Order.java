@@ -1,7 +1,7 @@
 package com.example.mealserve.domain.order.entity;
 
-import com.example.mealserve.domain.customer.entity.Customer;
 import com.example.mealserve.domain.menu.entity.Menu;
+import com.example.mealserve.domain.owner.entity.Account;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,24 +24,24 @@ public class Order extends TimeStamp {
     private DeliverStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customerId")
-    private Customer customer;
+    @JoinColumn(name = "accountId")
+    private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menuId")
     private Menu menu;
 
     @Builder
-    private Order(Customer customer, Menu menu, Integer quantity) {
-        this.customer = customer;
+    private Order(Account account, Menu menu, Integer quantity) {
+        this.account = account;
         this.menu = menu;
         this.quantity = quantity;
         this.status = DeliverStatus.PREPARE;
     }
 
-    public static Order from(Customer customer, Menu menu, Integer quantity) {
+    public static Order from(Account account, Menu menu, Integer quantity) {
         return Order.builder()
-                .customer(customer)
+                .account(account)
                 .menu(menu)
                 .quantity(quantity)
                 .build();
