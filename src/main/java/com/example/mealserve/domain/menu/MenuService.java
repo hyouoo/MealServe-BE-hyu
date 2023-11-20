@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,10 +47,33 @@ public class MenuService {
     @Transactional
     public MenuResponseDto updateMenu(Long menuId, MenuRequestDto menuRequestDto, MultipartFile image) throws IOException {
         Menu menu = validateMenuByIdAndGetMenu(menuId);
-        String imageUrl = uploadImageToS3(image);
+        String currentImageUrl = menu.getImage();
+        String imageUrl = updateImageToS3(image, currentImageUrl);
         menu.updateMenuDetail(menuRequestDto.getName(), menuRequestDto.getPrice(), imageUrl);
         Menu updateMenu = menuRepository.save(menu);
         return new MenuResponseDto(updateMenu);
+    }
+
+    //이미지 업로드
+    private String uploadImageToS3(MultipartFile image) throws IOException {
+        if (image == null || image.isEmpty()) {
+            throw new CustomException(ErrorCode.ELEMENTS_IS_REQUIRED);
+        }
+        return s3Upload.upload(image);
+    }
+
+    //이미지 수정
+    private String updateImageToS3(MultipartFile image, String currentImageUrl) throws IOException {
+        return Optional.ofNullable(image)
+                .filter(imageFIle -> !imageFIle.isEmpty())
+                .map(imageFIle -> {
+                    try {
+                        return s3Upload.upload(image);
+                    } catch (IOException e) {
+                        throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAILED);
+                    }
+                })
+                .orElse(currentImageUrl); //기존에 등록되어있는 이미지 URL을 반환
     }
 
     @Transactional
@@ -58,14 +82,6 @@ public class MenuService {
         Long storeId = menu.getStore().getId();
         menuRepository.delete(menu);
         return storeId; // 삭제된 메뉴의 상점 ID 반환
-    }
-
-    //이미지 업로드
-    private String uploadImageToS3(MultipartFile image) throws IOException {
-        if (image == null || image.isEmpty()) {
-            throw new CustomException(ErrorCode.ELEMENTS_IS_REQUIRED); // 혹은 기본 이미지 URL을 반환
-        }
-        return s3Upload.upload(image);
     }
 
     //메뉴 중복 검사
