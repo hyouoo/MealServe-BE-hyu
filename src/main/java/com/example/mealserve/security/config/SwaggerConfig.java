@@ -53,7 +53,7 @@ public class SwaggerConfig {
                                 .requestBody(new RequestBody()
                                         .content(new Content()
                                                 .addMediaType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE,
-                                                        new MediaType().schema(new Schema<>().$ref("#/components/schemas/UserLoginRequestDto"))))
+                                                        new MediaType().schema(new Schema<>().$ref("#/components/schemas/AccountLoginRequestDto"))))
                                 )
                                 .responses(new ApiResponses()
                                         .addApiResponse("200", new ApiResponse().description("로그인 성공"))
