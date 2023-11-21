@@ -21,13 +21,8 @@ public class OrderDto {
     private final DeliverStatus status;
 
     @Builder
-    private OrderDto(Long menuId,
-                     String name,
-                     Integer quantity,
-                     Integer price,
-                     String image,
-                     LocalDateTime createdAt,
-                     DeliverStatus status) {
+    private OrderDto(Long menuId, String name, Integer quantity, Integer price,
+                     String image, LocalDateTime createdAt, DeliverStatus status) {
         this.menuId = menuId;
         this.name = name;
         this.quantity = quantity;

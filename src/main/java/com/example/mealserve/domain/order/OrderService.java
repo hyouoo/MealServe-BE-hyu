@@ -7,6 +7,7 @@ import com.example.mealserve.domain.order.dto.OrderDto;
 import com.example.mealserve.domain.order.dto.OrderListResponseDto;
 import com.example.mealserve.domain.order.dto.OrderRequestDto;
 import com.example.mealserve.domain.order.dto.OrderResponseDto;
+import com.example.mealserve.domain.order.entity.DeliverStatus;
 import com.example.mealserve.domain.order.entity.Order;
 import com.example.mealserve.domain.store.StoreRepository;
 import com.example.mealserve.domain.store.entity.Store;
@@ -28,9 +29,7 @@ public class OrderService {
     private final StoreRepository storeRepository;
 
     @Transactional
-    public OrderResponseDto orderIn(Long storeId,
-                                    List<OrderRequestDto> requestDtoList,
-                                    Account account) {
+    public OrderResponseDto orderIn(Long storeId, List<OrderRequestDto> requestDtoList, Account customer) {
         Store store = findStore(storeId);
         List<OrderDto> orderDtoList = new ArrayList<>();
         int totalPrice = 0;
@@ -39,22 +38,22 @@ public class OrderService {
             Menu menu = (Menu) menuRepository.findByIdAndStoreId(storeId, requestDto.getMenuId())
                     .orElseThrow(() ->
                             new CustomException(ErrorCode.MENU_NOT_FOUND));
-            Order newOrder = Order.from(account, menu, requestDto.getQuantity());
+            Order newOrder = Order.of(customer, menu, requestDto.getQuantity(), DeliverStatus.PREPARE);
             orderRepository.save(newOrder);
 
             orderDtoList.add(OrderDto.fromCustomer(newOrder));
             totalPrice += menu.getPrice() * newOrder.getQuantity();
         }
 
-        if (account.getPoint() < totalPrice)
+        if (customer.getPoint() < totalPrice)
             throw new CustomException(ErrorCode.INSUFFICIENT_POINT);
 
-        return OrderResponseDto.from(orderDtoList, totalPrice);
+        return OrderResponseDto.of(orderDtoList, totalPrice);
     }
 
     @Transactional(readOnly = true)
-    public List<OrderListResponseDto> getOrders(Account account) {
-        Store store = findStore(account.getStore().getId());
+    public List<OrderListResponseDto> getOrders(Account owner) {
+        Store store = findStore(owner.getStore().getId());
         List<Order> orders = orderRepository.findAllByStoreId(store.getId());
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<OrderListResponseDto> orderListResponseDtos = new ArrayList<>();
@@ -69,7 +68,7 @@ public class OrderService {
                             * orders.get(i + j).getQuantity();
                 } else {
                     orderListResponseDtos.add(
-                            OrderListResponseDto.from(user, orderDtoList, totalPrice));
+                            OrderListResponseDto.of(user, orderDtoList, totalPrice));
                     i += j;
                     break;
                 }
@@ -78,9 +77,17 @@ public class OrderService {
         return orderListResponseDtos;
     }
 
+    @Transactional
+    public void completeOrders(Account owner, Long accountId) {
+        List<Order> orders = orderRepository.findAllByAccountId(accountId);
+        for (Order order : orders) {
+            owner.earnPoint(order.getMenu().getPrice() * order.getQuantity());
+            order.complete();
+        }
+    }
+
     private Store findStore(Long id) {
-        return storeRepository.findById(id)
-                .orElseThrow(() ->
-                        new CustomException(ErrorCode.STORE_NOT_FOUND));
+        return storeRepository.findById(id).orElseThrow(() ->
+                new CustomException(ErrorCode.STORE_NOT_FOUND));
     }
 }

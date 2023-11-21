@@ -69,4 +69,8 @@ public class Account {
             .point(requestDto.isOwner() ? 0L : 1000000L)
             .build();
     }
+
+    public void earnPoint(Integer point) {
+        this.point += point;
+    }
 }
