@@ -13,7 +13,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderListResponseDto {
 
-    private final Long customerId;
+    private final Long accountId;
     private final String address;
 
     private final List<OrderDto> menus;
@@ -23,9 +23,9 @@ public class OrderListResponseDto {
     private final DeliverStatus status;
 
     @Builder
-    private OrderListResponseDto(Long customerId, String address, List<OrderDto> menus,
+    private OrderListResponseDto(Long accountId, String address, List<OrderDto> menus,
                                  LocalDateTime createdAt, int totalPrice, DeliverStatus status) {
-        this.customerId = customerId;
+        this.accountId = accountId;
         this.address = address;
         this.menus = menus;
         this.createdAt = createdAt;
@@ -35,7 +35,7 @@ public class OrderListResponseDto {
 
     public static OrderListResponseDto of(Account account, List<OrderDto> menus, int totalPrice) {
         return OrderListResponseDto.builder()
-                .customerId(account.getId())
+                .accountId(account.getId())
                 .address(account.getAddress())
                 .menus(menus)
                 .createdAt(menus.get(0).getCreatedAt())
