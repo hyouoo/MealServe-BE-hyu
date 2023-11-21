@@ -1,16 +1,20 @@
 package com.example.mealserve.domain.store.dto;
 
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class StoreRequestDto {
-    private String name;
-    private String address;
-    private String tel;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class StoreRequestDto {
+
+    @NotBlank(message = "가게 이름을 입력해 주세요")
+    private String name;
+
+    @NotBlank(message = "주소를 입력해 주세요")
+    private String address;
+
+    @NotBlank(message = "전화번호를 입력해 주세요")
+    private String tel;
 }

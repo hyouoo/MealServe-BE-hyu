@@ -1,6 +1,6 @@
 package com.example.mealserve.domain.order;
 
-import com.example.mealserve.domain.customer.entity.Account;
+import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.MenuRepository;
 import com.example.mealserve.domain.menu.entity.Menu;
 import com.example.mealserve.domain.order.dto.OrderDto;
@@ -10,8 +10,8 @@ import com.example.mealserve.domain.order.dto.OrderResponseDto;
 import com.example.mealserve.domain.order.entity.Order;
 import com.example.mealserve.domain.store.StoreRepository;
 import com.example.mealserve.domain.store.entity.Store;
-import com.example.mealserve.exception.CustomException;
-import com.example.mealserve.exception.ErrorCode;
+import com.example.mealserve.global.exception.CustomException;
+import com.example.mealserve.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

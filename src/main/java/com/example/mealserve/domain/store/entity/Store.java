@@ -1,48 +1,66 @@
 package com.example.mealserve.domain.store.entity;
 
-import com.example.mealserve.domain.customer.entity.Account;
+import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.entity.Menu;
 import com.example.mealserve.domain.store.dto.StoreRequestDto;
-import com.example.mealserve.domain.store.dto.StoreResponseDto;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 기본 생성자의 생성을 방지, 지정한 생성자를 사용하도록 강제!
-// PROTECTED: 상속은 가능
-@Getter
 @Entity
+@Getter
 @Table(name = "store")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Store {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String tel;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    @OneToOne
+    @JoinColumn(name = "account_id") // TODO: 실행확인 (referencedColumnName = "id")
     private Account account;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menuList = new ArrayList<>();
 
     @Builder
-    private Store(String name, String address, String tel) {
+    private Store(String name, String address, String tel, Account account) {
         this.name = name;
         this.address = address;
         this.tel = tel;
+        this.account = account;
+    }
+
+    public static Store of(StoreRequestDto requestDto, Account account) {
+        return Store.builder()
+            .name(requestDto.getName())
+            .address(requestDto.getAddress())
+            .tel(requestDto.getTel())
+            .account(account)
+            .build();
     }
 
     public void update(StoreRequestDto storeRequestDto) {

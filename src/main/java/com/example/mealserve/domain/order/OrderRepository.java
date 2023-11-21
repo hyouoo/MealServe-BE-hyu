@@ -15,5 +15,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "left join fetch o.menu " +
             "where o.account.store.id = :storeId")
     List<Order> findAllByStoreId(Long storeId);
-
 }

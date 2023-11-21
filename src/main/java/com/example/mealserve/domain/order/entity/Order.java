@@ -1,6 +1,6 @@
 package com.example.mealserve.domain.order.entity;
 
-import com.example.mealserve.domain.customer.entity.Account;
+import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -23,11 +23,11 @@ public class Order extends TimeStamp {
     private DeliverStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accountId")
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menuId")
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     @Builder

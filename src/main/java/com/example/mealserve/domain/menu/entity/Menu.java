@@ -1,8 +1,8 @@
 package com.example.mealserve.domain.menu.entity;
 
 import com.example.mealserve.domain.store.entity.Store;
-import com.example.mealserve.exception.CustomException;
-import com.example.mealserve.exception.ErrorCode;
+import com.example.mealserve.global.exception.CustomException;
+import com.example.mealserve.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +36,7 @@ public class Menu {
         this.price = price;
         this.image = image;
         this.store = store;
+        store.getMenuList().add(this);
     }
 
     public static Menu of(String name, Integer price, String image, Store store) {

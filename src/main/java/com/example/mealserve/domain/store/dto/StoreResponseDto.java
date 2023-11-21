@@ -1,42 +1,47 @@
 package com.example.mealserve.domain.store.dto;
 
 import com.example.mealserve.domain.menu.dto.MenuResponseDto;
-import com.example.mealserve.domain.menu.entity.Menu;
 import com.example.mealserve.domain.store.entity.Store;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.ArrayList;
 import java.util.List;
+import lombok.Builder;
+import lombok.Getter;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
-@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class StoreResponseDto {
-    private String name;
-    private String address;
-    private String tel;
-    private List<MenuResponseDto> menus = new ArrayList<>();
 
-    public StoreResponseDto(Store store, List<MenuResponseDto> menus) {
-        this.name = store.getName();
-        this.address = store.getAddress();
+    private final Long id;
+    private final String name;
+    private final String address;
+    private final String tel;
+    private final List<MenuResponseDto> menus;
+
+    @Builder
+    private StoreResponseDto(Long id, String name, String address, String tel, List<MenuResponseDto> menus) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.tel = tel;
         this.menus = menus;
     }
 
-    public StoreResponseDto(Store store) {
-        this.name = store.getName();
-        this.address = store.getAddress();
-        this.tel = store.getTel();
+    public static StoreResponseDto of(Store store, List<MenuResponseDto> menus) {
+        return StoreResponseDto.builder()
+            .id(store.getId())
+            .name(store.getName())
+            .address(store.getAddress())
+            .tel(store.getTel())
+            .menus(menus)
+            .build();
     }
 
     public static StoreResponseDto from(Store store) {
-        return new StoreResponseDto(store);
+        return StoreResponseDto.builder()
+            .id(store.getId())
+            .name(store.getName())
+            .address(store.getAddress())
+            .tel(store.getTel())
+            .build();
     }
-
 }
