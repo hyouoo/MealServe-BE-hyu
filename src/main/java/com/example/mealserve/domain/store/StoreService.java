@@ -56,7 +56,7 @@ public class StoreService {
 
         List<Menu> menus = menuRepository.findByStoreId(storeId);
         List<MenuResponseDto> menuResponseDtoList = menus.stream()
-                .map(MenuResponseDto::new)
+                .map(MenuResponseDto::from)
                 .toList();
 
         return StoreResponseDto.of(store, menuResponseDtoList);

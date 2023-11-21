@@ -8,17 +8,17 @@ import com.example.mealserve.domain.store.entity.Store;
 import com.example.mealserve.global.exception.CustomException;
 import com.example.mealserve.global.exception.ErrorCode;
 import com.example.mealserve.global.s3.S3Upload;
+import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
     private final S3Upload s3Upload;
@@ -26,22 +26,20 @@ public class MenuService {
     @Transactional
     public MenuResponseDto addMenu(MenuRequestDto menuRequestDto, Long storeId) throws IOException {
         Store store = validateStoreById(storeId);
-        validateMenuByName(menuRequestDto.getName());
         String imageUrl = uploadImageToS3(menuRequestDto.getImage());
-        Menu menu = Menu.of(
-                menuRequestDto.getName(),
-                menuRequestDto.getPrice(),
-                imageUrl,
-                store
-        );
+
+        Menu menu = Menu.of(menuRequestDto, imageUrl, store);
+
+        validateMenuByName(menuRequestDto.getName());
+
         menuRepository.save(menu);
-        return new MenuResponseDto(menu);
+        return MenuResponseDto.from(menu);
     }
 
     @Transactional(readOnly = true)
     public MenuResponseDto getMenu(Long menuId) {
         Menu menu = validateMenuByIdAndGetMenu(menuId);
-        return new MenuResponseDto(menu);
+        return MenuResponseDto.from(menu);
     }
 
     @Transactional
@@ -50,8 +48,15 @@ public class MenuService {
         String currentImageUrl = menu.getImage();
         String imageUrl = updateImageToS3(image, currentImageUrl);
         menu.updateMenuDetail(menuRequestDto.getName(), menuRequestDto.getPrice(), imageUrl);
-        Menu updateMenu = menuRepository.save(menu);
-        return new MenuResponseDto(updateMenu);
+        return MenuResponseDto.from(menu);
+    }
+
+    @Transactional
+    public Long deleteMenu(Long menuId) {
+        Menu menu = validateMenuByIdAndGetMenu(menuId);
+        Long storeId = menu.getStore().getId();
+        menuRepository.delete(menu);
+        return storeId; // 삭제된 메뉴의 상점 ID 반환
     }
 
     //이미지 업로드
@@ -74,14 +79,6 @@ public class MenuService {
                     }
                 })
                 .orElse(currentImageUrl); //기존에 등록되어있는 이미지 URL을 반환
-    }
-
-    @Transactional
-    public Long deleteMenu(Long menuId) {
-        Menu menu = validateMenuByIdAndGetMenu(menuId);
-        Long storeId = menu.getStore().getId();
-        menuRepository.delete(menu);
-        return storeId; // 삭제된 메뉴의 상점 ID 반환
     }
 
     //메뉴 중복 검사

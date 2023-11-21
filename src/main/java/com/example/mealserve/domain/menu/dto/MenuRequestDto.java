@@ -5,13 +5,15 @@ import com.example.mealserve.domain.menu.validation.FileSize;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MenuRequestDto {
+
     @NotBlank(message = "메뉴 이름을 입력해주세요")
     private String name;
 

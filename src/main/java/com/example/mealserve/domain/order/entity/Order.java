@@ -25,11 +25,11 @@ public class Order extends TimeStamp {
     private DeliverStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accountId")
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menuId")
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     @Builder

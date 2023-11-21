@@ -6,9 +6,9 @@ import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = FileExtensionValidator.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = FileExtensionValidator.class)
 public @interface FileExtension {
     String message() default "파일 확장자가 유효하지 않습니다.";
 

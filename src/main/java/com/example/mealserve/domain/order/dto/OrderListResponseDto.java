@@ -3,11 +3,10 @@ package com.example.mealserve.domain.order.dto;
 import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.order.entity.DeliverStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -44,5 +43,3 @@ public class OrderListResponseDto {
                 .build();
     }
 }
-
-
