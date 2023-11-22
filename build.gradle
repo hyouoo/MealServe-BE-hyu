@@ -42,16 +42,16 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
+    testImplementation 'org.projectlombok:lombok:1.18.28'
+    compileOnly 'org.projectlombok:lombok'
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
 
-tasks.named('bootBuildImage') {
-	builder = 'paketobuildpacks/builder-jammy-base:latest'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
