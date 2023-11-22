@@ -14,12 +14,14 @@ import com.example.mealserve.domain.store.entity.Store;
 import com.example.mealserve.global.exception.CustomException;
 import com.example.mealserve.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j(topic = "OrderService")
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -36,6 +38,7 @@ public class OrderService {
 
         for (OrderRequestDto requestDto : requestDtoList) {
             Menu menu = getMenu(requestDto);
+
             Order newOrder = Order.of(customer, menu, requestDto.getQuantity(), DeliverStatus.PREPARE);
             orderRepository.save(newOrder);
 
@@ -51,25 +54,32 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderListResponseDto> getOrders(Account owner) {
-        Store store = findStore(owner.getStore().getId());
+        log.info("store 조회");
+        Store store = owner.getStore();
+        log.info("fetch join start");
         List<Order> orders = orderRepository.findAllByStoreId(store.getId());
+        log.info("fetch join end");
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<OrderListResponseDto> orderListResponseDtos = new ArrayList<>();
 
-        int i = 0, totalPrice = 0;
-        while (i < orders.size()) {
-            for (int j = 0; j < orders.size(); j++) {
-                Account user = orders.get(i).getAccount();
-                if (user == orders.get(i + j).getAccount()) {
-                    orderDtoList.add(OrderDto.fromOwner(orders.get(i + j)));
-                    totalPrice += orders.get(i + j).getMenu().getPrice()
-                            * orders.get(i + j).getQuantity();
-                } else {
-                    orderListResponseDtos.add(
-                            OrderListResponseDto.of(user, orderDtoList, totalPrice));
-                    i += j;
-                    break;
-                }
+        int i = 0, j = 0, totalPrice = 0;
+        log.info("while start");
+        while (true) {
+            Account user = orders.get(i).getAccount();
+            if (user == orders.get(i + j).getAccount()) {
+                orderDtoList.add(OrderDto.fromOwner(orders.get(i + j)));
+                totalPrice += orders.get(i + j).getMenu().getPrice() * orders.get(i + j).getQuantity();
+                j++;
+            } else {
+                orderListResponseDtos.add(OrderListResponseDto.of(user, orderDtoList, totalPrice));
+                i += j;
+                j = 0;
+                totalPrice = 0;
+                orderDtoList.clear();
+            }
+            if (i + j == orders.size()) {
+                orderListResponseDtos.add(OrderListResponseDto.of(user, orderDtoList, totalPrice));
+                break;
             }
         }
         return orderListResponseDtos;
