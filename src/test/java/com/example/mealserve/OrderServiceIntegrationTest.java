@@ -35,12 +35,7 @@ public class OrderServiceIntegrationTest {
     @Autowired
     MenuRepository menuRepository;
     @Autowired
-    private AccountRepository accountRepository;
-
-    @BeforeAll
-    void setUp() {
-
-    }
+    AccountRepository accountRepository;
 
     @Test
     @DisplayName("메뉴 주문")
@@ -77,7 +72,6 @@ public class OrderServiceIntegrationTest {
         for (OrderListResponseDto dto : orderListResponseDtos) {
             System.out.println("customer Id = " + dto.getAccountId());
         }
-        System.out.println(orderListResponseDtos);
     }
 
     @Test

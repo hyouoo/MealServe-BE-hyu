@@ -1,5 +1,6 @@
 package com.example.mealserve.domain.order;
 
+import com.example.mealserve.domain.account.AccountRepository;
 import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.MenuRepository;
 import com.example.mealserve.domain.menu.entity.Menu;
@@ -25,6 +26,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+    private final AccountRepository accountRepository;
 
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
@@ -46,7 +48,7 @@ public class OrderService {
             totalPrice += menu.getPrice() * newOrder.getQuantity();
         }
 
-        checkEnoughPoint(customer, totalPrice);
+        checkEnoughPoint(customer, totalPrice).payPoint(totalPrice);
 
         return OrderResponseDto.of(orderDtoList, totalPrice);
     }
@@ -54,7 +56,6 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderListResponseDto> getOrders(Account owner) {
-        log.info("store 조회");
         Store store = owner.getStore();
         log.info("fetch join start");
         List<Order> orders = orderRepository.findAllByStoreId(store.getId());
@@ -82,16 +83,20 @@ public class OrderService {
                 break;
             }
         }
+        log.info("while end");
         return orderListResponseDtos;
     }
 
     @Transactional
     public void completeOrders(Account owner, Long accountId) {
         List<Order> orders = orderRepository.findAllByAccountId(accountId);
+        int totalPrice = 0;
         for (Order order : orders) {
-            owner.earnPoint(order.getMenu().getPrice() * order.getQuantity());
-            order.complete();
+            checkOrderStatus(order).complete();
+            totalPrice += order.getMenu().getPrice() * order.getQuantity();
         }
+        owner.earnPoint(totalPrice);
+        accountRepository.save(owner);
     }
 
     private Store findStore(Long id) {
@@ -101,11 +106,18 @@ public class OrderService {
 
     private Menu getMenu(OrderRequestDto requestDto) {
         return menuRepository.findById(requestDto.getMenuId())
-            .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
     }
 
-    private static void checkEnoughPoint(Account customer, int totalPrice) {
+    private Account checkEnoughPoint(Account customer, int totalPrice) {
         if (customer.getPoint() < totalPrice)
             throw new CustomException(ErrorCode.INSUFFICIENT_POINT);
+        return customer;
+    }
+
+    private Order checkOrderStatus(Order order) {
+        if (order.getStatus().equals(DeliverStatus.COMPLETE))
+            throw new CustomException(ErrorCode.ORDER_ALREADY_COMPLETED);
+        return order;
     }
 }
