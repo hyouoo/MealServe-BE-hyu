@@ -2,18 +2,17 @@ package com.example.mealserve.domain.order.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
+@Data
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderListRequestDto {
 
-    @NotNull @Valid
+    @NotNull
+    @Valid
     private List<OrderRequestDto> orders;
 
     @Builder

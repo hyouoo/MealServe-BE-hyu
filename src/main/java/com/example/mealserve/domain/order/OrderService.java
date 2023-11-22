@@ -56,7 +56,7 @@ public class OrderService {
     public List<OrderListResponseDto> getOrders(Account owner) {
         Store store = owner.getStore();
         log.info("fetch join start");
-        List<Order> orders = orderRepository.findAllByStoreId(store.getId());
+        List<Order> orders = orderRepository.findAllByStoreIdAndStatus(store.getId());
         log.info("fetch join end");
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<OrderListResponseDto> orderListResponseDtos = new ArrayList<>();
