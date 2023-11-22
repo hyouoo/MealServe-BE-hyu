@@ -73,11 +73,13 @@ public class SecurityConfig {
 
         // 접근 권한 설정
         http.authorizeHttpRequests((authorizeHttpRequests) ->
+
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/stores/**").permitAll()
                         .anyRequest().authenticated());
+
 
         // 필터 -> 순서 중요
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
