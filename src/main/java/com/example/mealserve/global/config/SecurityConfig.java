@@ -1,6 +1,5 @@
 package com.example.mealserve.global.config;
 
-import com.example.mealserve.domain.account.AccountRepository;
 import com.example.mealserve.global.security.filter.JwtAuthenticationFilter;
 import com.example.mealserve.global.security.filter.JwtAuthorizationFilter;
 import com.example.mealserve.global.security.impl.UserDetailsServiceImpl;
@@ -15,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,7 +30,6 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-    private final AccountRepository accountRepository;
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
@@ -47,41 +46,34 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, accountRepository);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         // CSRF 설정
-        http.csrf().disable();
-        http.cors();
+        http.csrf(AbstractHttpConfigurer::disable);
 
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         // 기본 설정인 Session 방식은 사용하지 않고, JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
-
         // 접근 권한 설정
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .permitAll()// resources 접근 허용 설정
-                // swagger 관련 링크 허용
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("/swagger-resources/**", "/webjars/**", "/v3/api-docs/**",
                     "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                // 회원가입, 로그인 경로 허용
                 .requestMatchers("/api/auth/**").permitAll()
-                // 그 외 모든 요청 인증 처리
-//                .anyRequest().permitAll());
                 .anyRequest().authenticated());
 
         // 필터 -> 순서 중요
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }
@@ -100,5 +92,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 }

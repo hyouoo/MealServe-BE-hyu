@@ -1,15 +1,14 @@
 package com.example.mealserve.global.security.filter;
 
-import com.example.mealserve.domain.account.AccountRepository;
-import com.example.mealserve.global.exception.CustomException;
-import com.example.mealserve.global.exception.ErrorCode;
-import com.example.mealserve.global.security.jwt.JwtUtil;
 import com.example.mealserve.global.security.impl.UserDetailsServiceImpl;
+import com.example.mealserve.global.security.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,45 +19,31 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.net.URLDecoder;
-
+@RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
 
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AccountRepository accountRepository) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
-
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            if (req.getHeader(JwtUtil.ACCESSTOKEN_HEADER) == null)
-                throw new CustomException(ErrorCode.NOT_FOUND_TOKEN);
-            String token = URLDecoder.decode(req.getHeader(JwtUtil.ACCESSTOKEN_HEADER), "UTF-8");
+    @SuppressWarnings("NullableProblems")
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
+                                    throws ServletException, IOException {
+        String token = jwtUtil.getTokenFromRequest(req);
 
-            if (StringUtils.hasText(token) && token != null) {
+        if (StringUtils.hasText(token)) {
 
-                String tokenValue = jwtUtil.substringToken(token);
-                logger.error("토큰 확인용 : " + tokenValue);
-                jwtUtil.validateToken(tokenValue);
-
-                Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
-                try {
-                    setAuthentication(info.getSubject());
-                } catch (Exception e) {
-                    logger.error("-->인증오류<--");
-                }
+            String tokenValue = jwtUtil.substringToken(token);
+            logger.info("토큰 확인용 : " + tokenValue);
+            if (!jwtUtil.validateToken(tokenValue)) {
+                return;
             }
-        } catch (Exception e) {
-            req.setAttribute("exception", e);
+            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+
+            setAuthentication(info.getSubject());
         }
-        logger.error(req.getRequestURI());
+        logger.info(req.getRequestURI());
         filterChain.doFilter(req, res);
     }
 

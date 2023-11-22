@@ -47,10 +47,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     )
             );
 
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-
-        } catch (AuthenticationException e) {
+        } catch (IOException | AuthenticationException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -65,7 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("로그인 성공 및 JWT 생성");
 
         String email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        AccountRole role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        AccountRole role = ((UserDetailsImpl) authResult.getPrincipal()).getAccount().getRole();
 
         String token = jwtUtil.createToken(email, role);
         jwtUtil.addJwtToCookie(token, response);
@@ -92,11 +89,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // 간단한 응답 객체
     @Getter
     private static class SimpleResponse {
-        private String message;
+        private final String message;
 
         public SimpleResponse(String message) {
             this.message = message;
-
         }
     }
 }
