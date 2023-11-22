@@ -1,8 +1,8 @@
 package com.example.mealserve.global.security.impl;
 
 import com.example.mealserve.domain.account.entity.Account;
-import com.example.mealserve.domain.store.entity.Store;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,15 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+@Getter
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-
     private final Account account;
-
-    public Account getUser() {
-        return account;
-    }
 
     @Override
     public String getPassword() {
@@ -28,14 +24,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getUsername() { // 이메일 반환
         return account.getEmail();
-    }
-
-    public Long getUserId() {
-        return account.getId();
-    }
-
-    public Store getStore() {
-        return account.getStore();
     }
 
     @Override

@@ -32,14 +32,13 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto orderIn(Long storeId, List<OrderRequestDto> requestDtoList, Account customer) {
-        Store store = findStore(storeId);
+        findStore(storeId);
         List<OrderDto> orderDtoList = new ArrayList<>();
         int totalPrice = 0;
 
         for (OrderRequestDto requestDto : requestDtoList) {
-            Menu menu = menuRepository.findById(requestDto.getMenuId())
-                    .orElseThrow(() ->
-                            new CustomException(ErrorCode.MENU_NOT_FOUND));
+            Menu menu = getMenu(requestDto);
+
             Order newOrder = Order.of(customer, menu, requestDto.getQuantity(), DeliverStatus.PREPARE);
             orderRepository.save(newOrder);
 
@@ -47,11 +46,11 @@ public class OrderService {
             totalPrice += menu.getPrice() * newOrder.getQuantity();
         }
 
-        if (customer.getPoint() < totalPrice)
-            throw new CustomException(ErrorCode.INSUFFICIENT_POINT);
+        checkEnoughPoint(customer, totalPrice);
 
         return OrderResponseDto.of(orderDtoList, totalPrice);
     }
+
 
     @Transactional(readOnly = true)
     public List<OrderListResponseDto> getOrders(Account owner) {
@@ -98,5 +97,15 @@ public class OrderService {
     private Store findStore(Long id) {
         return storeRepository.findById(id).orElseThrow(() ->
                 new CustomException(ErrorCode.STORE_NOT_FOUND));
+    }
+
+    private Menu getMenu(OrderRequestDto requestDto) {
+        return menuRepository.findById(requestDto.getMenuId())
+            .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
+    }
+
+    private static void checkEnoughPoint(Account customer, int totalPrice) {
+        if (customer.getPoint() < totalPrice)
+            throw new CustomException(ErrorCode.INSUFFICIENT_POINT);
     }
 }

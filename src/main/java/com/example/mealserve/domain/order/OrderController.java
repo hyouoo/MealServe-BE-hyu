@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,21 +25,22 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/{storeId}/orders")
-    public OrderResponseDto orderIn(@PathVariable Long storeId,
+    public ResponseEntity<OrderResponseDto> orderIn(@PathVariable Long storeId,
                                     @RequestBody @Validated List<OrderRequestDto> requestDtoList,
                                     @LoginAccount Account customer) {
-        return orderService.orderIn(storeId, requestDtoList, customer);
+        OrderResponseDto responseBody = orderService.orderIn(storeId, requestDtoList, customer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
-    @Secured(AccountRole.Authority.OWNER)
     @GetMapping("/orders")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<List<OrderListResponseDto>> getOrders(@LoginAccount Account owner) {
         List<OrderListResponseDto> responseBody = orderService.getOrders(owner);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
-    @Secured(AccountRole.Authority.OWNER)
     @PutMapping("/orders/{accountId}")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<String> completeOrders(@LoginAccount Account owner, @PathVariable Long accountId) {
         orderService.completeOrders(owner, accountId);
         String responseBody = DeliverStatus.COMPLETE.getDescription();
