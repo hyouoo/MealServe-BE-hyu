@@ -5,6 +5,7 @@ import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.MenuRepository;
 import com.example.mealserve.domain.order.OrderRepository;
 import com.example.mealserve.domain.order.OrderService;
+import com.example.mealserve.domain.order.dto.OrderListRequestDto;
 import com.example.mealserve.domain.order.dto.OrderListResponseDto;
 import com.example.mealserve.domain.order.dto.OrderRequestDto;
 import com.example.mealserve.domain.order.dto.OrderResponseDto;
@@ -42,7 +43,8 @@ public class OrderServiceIntegrationTest {
     void testOrderIn() {
         // given
         Long storeId = 2L;
-        List<OrderRequestDto> requestDtoList = List.of(OrderRequestDto.of(1L, 2), OrderRequestDto.of(2L, 3));
+        List<OrderRequestDto> requestDtos = List.of(OrderRequestDto.of(1L, 2), OrderRequestDto.of(2L, 3));
+        OrderListRequestDto requestDtoList = OrderListRequestDto.from(requestDtos);
         Account customer = accountRepository.findById(2L).orElse(null);
 
         // when

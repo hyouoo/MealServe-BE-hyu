@@ -24,8 +24,4 @@ public class MenuRequestDto {
     @FileSize(max = 1048576, message = "이미지 파일은 1MB 이하이어야 합니다")
     @FileExtension(ext = "png,jpg,jpeg", message = "이미지 파일은 png, jpg, jpeg 형식이어야 합니다")
     private MultipartFile image;
-
-    public void updateImageFile(MultipartFile imageFile) {
-        this.image = imageFile;
-    }
 }

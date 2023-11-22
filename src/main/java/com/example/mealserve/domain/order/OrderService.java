@@ -4,10 +4,7 @@ import com.example.mealserve.domain.account.AccountRepository;
 import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.MenuRepository;
 import com.example.mealserve.domain.menu.entity.Menu;
-import com.example.mealserve.domain.order.dto.OrderDto;
-import com.example.mealserve.domain.order.dto.OrderListResponseDto;
-import com.example.mealserve.domain.order.dto.OrderRequestDto;
-import com.example.mealserve.domain.order.dto.OrderResponseDto;
+import com.example.mealserve.domain.order.dto.*;
 import com.example.mealserve.domain.order.entity.DeliverStatus;
 import com.example.mealserve.domain.order.entity.Order;
 import com.example.mealserve.domain.store.StoreRepository;
@@ -33,12 +30,12 @@ public class OrderService {
     private final StoreRepository storeRepository;
 
     @Transactional
-    public OrderResponseDto orderIn(Long storeId, List<OrderRequestDto> requestDtoList, Account customer) {
+    public OrderResponseDto orderIn(Long storeId, OrderListRequestDto requestDtoList, Account customer) {
         findStore(storeId);
         List<OrderDto> orderDtoList = new ArrayList<>();
         int totalPrice = 0;
 
-        for (OrderRequestDto requestDto : requestDtoList) {
+        for (OrderRequestDto requestDto : requestDtoList.getOrders()) {
             Menu menu = getMenu(requestDto);
 
             Order newOrder = Order.of(customer, menu, requestDto.getQuantity(), DeliverStatus.PREPARE);
@@ -49,6 +46,7 @@ public class OrderService {
         }
 
         checkEnoughPoint(customer, totalPrice).payPoint(totalPrice);
+        accountRepository.save(customer);
 
         return OrderResponseDto.of(orderDtoList, totalPrice);
     }

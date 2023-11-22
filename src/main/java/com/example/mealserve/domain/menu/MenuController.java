@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import java.io.IOException;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@Slf4j
 @RestController
 @MultipartConfig
 @RequiredArgsConstructor
@@ -39,15 +41,14 @@ public class MenuController {
     @PostMapping("")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<MenuResponseDto> addMenu(@RequestPart("menu") @Validated MenuRequestDto menuRequestDto,
-                                                   @RequestPart("imageFile") MultipartFile image,
-                                                @LoginAccount Account account
-                                                    ) throws IOException {
+                                                   @RequestPart("image") MultipartFile image,
+                                                   @LoginAccount Account account) throws IOException {
+
         Store store = account.getStore();
         if (store == null) {
             throw new CustomException(ErrorCode.STORE_NOT_FOUND);
         }
-        menuRequestDto.updateImageFile(image);
-        MenuResponseDto responseBody = menuService.addMenu(menuRequestDto, store.getId());
+        MenuResponseDto responseBody = menuService.addMenu(menuRequestDto, store.getId(), image);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
@@ -61,8 +62,8 @@ public class MenuController {
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<MenuResponseDto> updateMenu(@PathVariable Long menuId,
                                                       @ModelAttribute MenuRequestDto menuRequestDto,
-                                                      @RequestParam(value = "imageFile", required = false) MultipartFile image
-                                                      ) throws IOException {
+                                                      @RequestParam(value = "image", required = false)
+                                                          MultipartFile image) throws IOException {
         MenuResponseDto responseBody = menuService.updateMenu(menuId, menuRequestDto, image);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
