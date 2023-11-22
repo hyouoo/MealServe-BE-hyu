@@ -16,10 +16,9 @@ build/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-imp
-JWT
 
 ### IntelliJ IDEA ###
+application.yml
 .idea
 *.iws
 *.iml

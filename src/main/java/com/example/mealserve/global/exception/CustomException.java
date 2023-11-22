@@ -1,4 +1,4 @@
-package com.example.mealserve.exception;
+package com.example.mealserve.global.exception;
 
 import lombok.Getter;
 
