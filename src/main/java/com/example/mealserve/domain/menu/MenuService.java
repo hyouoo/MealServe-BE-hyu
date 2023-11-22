@@ -24,13 +24,14 @@ public class MenuService {
     private final S3Upload s3Upload;
 
     @Transactional
-    public MenuResponseDto addMenu(MenuRequestDto menuRequestDto, Long storeId) throws IOException {
+    public MenuResponseDto addMenu(MenuRequestDto menuRequestDto, Long storeId, MultipartFile image) throws IOException {
+
         Store store = validateStoreById(storeId);
-        String imageUrl = uploadImageToS3(menuRequestDto.getImage());
+        validateMenuByName(menuRequestDto.getName());
+
+        String imageUrl = uploadImageToS3(image);
 
         Menu menu = Menu.of(menuRequestDto, imageUrl, store);
-
-        validateMenuByName(menuRequestDto.getName());
 
         menuRepository.save(menu);
         return MenuResponseDto.from(menu);
@@ -83,8 +84,8 @@ public class MenuService {
 
     //메뉴 중복 검사
     private void validateMenuByName(String name) {
-        Menu registeredMenu = menuRepository.findByName(name);
-        if (registeredMenu != null) {
+        boolean registeredMenu = menuRepository.existsByName(name);
+        if (registeredMenu) {
             throw new CustomException(ErrorCode.MENU_ALREADY_EXIST);
         }
     }
