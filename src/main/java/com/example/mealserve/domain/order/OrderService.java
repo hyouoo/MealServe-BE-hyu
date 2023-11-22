@@ -87,7 +87,10 @@ public class OrderService {
 
     @Transactional
     public void completeOrders(Account owner, Long accountId) {
-        List<Order> orders = orderRepository.findAllByAccountId(accountId);
+        Store store = owner.getStore();
+        List<Order> orders = orderRepository.findAllByAccountIdAndStoreAndStatus(accountId, store);
+
+        checkOrderExists(orders);
         int totalPrice = 0;
         for (Order order : orders) {
             checkOrderStatus(order).complete();
@@ -111,6 +114,10 @@ public class OrderService {
         if (customer.getPoint() < totalPrice)
             throw new CustomException(ErrorCode.INSUFFICIENT_POINT);
         return customer;
+    }
+
+    private void checkOrderExists(List<Order> orders) {
+        if (orders.isEmpty()) throw new CustomException(ErrorCode.ORDER_ALREADY_COMPLETED);
     }
 
     private Order checkOrderStatus(Order order) {
