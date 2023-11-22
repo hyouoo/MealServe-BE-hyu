@@ -11,10 +11,14 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select o from Order o " +
-            "left join fetch o.account " +
-            "left join fetch o.menu " +
-            "where o.menu.store.id = :storeId")
+            "join fetch o.account " +
+            "join fetch o.menu " +
+            "where o.menu.store.id = :storeId " +
+            "order by o.createdAt")
     List<Order> findAllByStoreId(Long storeId);
 
+    @Query("select o from Order o " +
+            "join fetch o.menu " +
+            "where o.account.id = :accountId")
     List<Order> findAllByAccountId(Long accountId);
 }
