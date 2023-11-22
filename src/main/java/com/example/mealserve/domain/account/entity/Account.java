@@ -73,4 +73,8 @@ public class Account {
     public void earnPoint(Integer point) {
         this.point += point;
     }
+
+    public void payPoint(Integer totalPrice) {
+        this.point -= totalPrice;
+    }
 }
