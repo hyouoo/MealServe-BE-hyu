@@ -1,8 +1,8 @@
 package com.example.mealserve.domain.order;
 
 import com.example.mealserve.domain.account.entity.Account;
+import com.example.mealserve.domain.order.dto.OrderListRequestDto;
 import com.example.mealserve.domain.order.dto.OrderListResponseDto;
-import com.example.mealserve.domain.order.dto.OrderRequestDto;
 import com.example.mealserve.domain.order.dto.OrderResponseDto;
 import com.example.mealserve.domain.order.entity.DeliverStatus;
 import com.example.mealserve.global.tool.LoginAccount;
@@ -24,7 +24,7 @@ public class OrderController {
 
     @PostMapping("/{storeId}/orders")
     public ResponseEntity<OrderResponseDto> orderIn(@PathVariable Long storeId,
-                                                    @RequestBody @Validated List<OrderRequestDto> requestDtoList,
+                                                    @RequestBody @Validated OrderListRequestDto requestDtoList,
                                                     @LoginAccount Account customer) {
         OrderResponseDto responseBody = orderService.orderIn(storeId, requestDtoList, customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
