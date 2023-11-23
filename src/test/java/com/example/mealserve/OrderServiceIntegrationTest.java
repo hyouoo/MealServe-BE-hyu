@@ -81,14 +81,14 @@ public class OrderServiceIntegrationTest {
     @Rollback(value = false)
     void testCompleteOrders() {
         // given
-        Account owner = accountRepository.findById(4L).orElse(null);
+        Account owner = accountRepository.findById(4L).orElseThrow(() -> new NullPointerException("null"));
         Long accountId = 5L;
 
         // when
         orderService.completeOrders(owner, accountId);
 
         // then
-        List<Order> orders = orderRepository.findAllByAccountId(accountId);
+        List<Order> orders = orderRepository.findAllByAccountIdAndStoreAndStatus(accountId, owner.getStore());
         for (Order order : orders) {
             System.out.println("order.status = " + order.getStatus());
         }
