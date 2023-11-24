@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j(topic = "Test Code")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OrderServiceIntegrationTest {
 
     @Autowired
