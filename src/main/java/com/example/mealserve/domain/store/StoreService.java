@@ -4,12 +4,12 @@ import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.MenuRepository;
 import com.example.mealserve.domain.menu.dto.MenuResponseDto;
 import com.example.mealserve.domain.menu.entity.Menu;
+import com.example.mealserve.domain.store.document.StoreDocument;
 import com.example.mealserve.domain.store.dto.StoreRequestDto;
 import com.example.mealserve.domain.store.dto.StoreResponseDto;
 import com.example.mealserve.domain.store.entity.Store;
 import com.example.mealserve.global.exception.CustomException;
 import com.example.mealserve.global.exception.ErrorCode;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,11 +17,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final StoreSearchRepository storeSearchRepository;
     private final MenuRepository menuRepository;
 
     @Transactional
@@ -30,6 +33,7 @@ public class StoreService {
         Store store = Store.of(storeRequestDto, account);
 
         Store savedStore = storeRepository.save(store);
+        storeSearchRepository.save(StoreDocument.from(savedStore));
 
         return StoreResponseDto.from(savedStore);
     }
@@ -39,6 +43,7 @@ public class StoreService {
         Store store = getStoreById(storeId);
 
         store.update(storeRequestDto);
+        storeSearchRepository.save(StoreDocument.from(store));
 
         return StoreResponseDto.from(store);
     }
@@ -78,6 +83,7 @@ public class StoreService {
                 .toList();
     }
 
+
     private void checkIfStoreExist(StoreRequestDto storeRequestDto) {
         if (storeRepository.existsByName(storeRequestDto.getName())) {
             throw new CustomException(ErrorCode.STORE_ALREADY_EXISTS);
@@ -90,8 +96,8 @@ public class StoreService {
         }
     }
 
-    private Store getStoreById(Long storeId){
+    private Store getStoreById(Long storeId) {
         return storeRepository.findById(storeId)
-            .orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND));
     }
 }
