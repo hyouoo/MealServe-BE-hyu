@@ -23,8 +23,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final AccountRepository accountRepository;
 
+    private final AccountRepository accountRepository;
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
@@ -57,6 +57,7 @@ public class OrderService {
         Store store = owner.getStore();
         log.info("fetch join start");
         List<Order> orders = orderRepository.findAllByStoreIdAndStatus(store.getId());
+        checkOrderExists(orders);
         log.info("fetch join end");
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<OrderListResponseDto> orderListResponseDtos = new ArrayList<>();
@@ -89,8 +90,8 @@ public class OrderService {
     public void completeOrders(Account owner, Long accountId) {
         Store store = owner.getStore();
         List<Order> orders = orderRepository.findAllByAccountIdAndStoreAndStatus(accountId, store);
-
         checkOrderExists(orders);
+
         int totalPrice = 0;
         for (Order order : orders) {
             checkOrderStatus(order).complete();
@@ -117,12 +118,12 @@ public class OrderService {
     }
 
     private void checkOrderExists(List<Order> orders) {
-        if (orders.isEmpty()) throw new CustomException(ErrorCode.ORDER_ALREADY_COMPLETED);
+        if (orders.isEmpty()) throw new CustomException(ErrorCode.ORDER_NOT_FOUND);
     }
 
     private Order checkOrderStatus(Order order) {
         if (order.getStatus().equals(DeliverStatus.COMPLETE))
-            throw new CustomException(ErrorCode.ORDER_ALREADY_COMPLETED);
+            throw new CustomException(ErrorCode.ORDER_NOT_FOUND);
         return order;
     }
 }
