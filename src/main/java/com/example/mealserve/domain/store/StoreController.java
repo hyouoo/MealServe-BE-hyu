@@ -5,6 +5,8 @@ import com.example.mealserve.domain.store.dto.StoreRequestDto;
 import com.example.mealserve.domain.store.dto.StoreResponseDto;
 import com.example.mealserve.global.tool.LoginAccount;
 import java.net.URI;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class StoreController {
 
     private final StoreService storeService;
+    private final StoreSearchService storeSearchService;
 
     @PostMapping
     public ResponseEntity<StoreResponseDto> registerStore(@RequestBody @Validated StoreRequestDto storeRequestDto,
@@ -55,6 +58,13 @@ public class StoreController {
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreResponseDto> getStore(@PathVariable Long storeId) {
         StoreResponseDto responseBody = storeService.getStore(storeId);
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<StoreResponseDto>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
+        List<StoreResponseDto> responseBody = storeSearchService.getStoreDocumentByKeyword(keyword);
+//        List<StoreResponseDto> responseBody = storeService.getStoreByKeyword(keyword);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 

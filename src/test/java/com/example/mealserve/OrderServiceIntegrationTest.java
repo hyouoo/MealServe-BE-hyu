@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j(topic = "Test Code")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OrderServiceIntegrationTest {
 
     @Autowired
@@ -78,17 +76,16 @@ public class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("배달 완료")
-    @Rollback(value = false)
     void testCompleteOrders() {
         // given
-        Account owner = accountRepository.findById(4L).orElse(null);
+        Account owner = accountRepository.findById(4L).orElseThrow(() -> new NullPointerException("null"));
         Long accountId = 5L;
 
         // when
         orderService.completeOrders(owner, accountId);
 
         // then
-        List<Order> orders = orderRepository.findAllByAccountId(accountId);
+        List<Order> orders = orderRepository.findAllByAccountIdAndStoreAndStatus(accountId, owner.getStore());
         for (Order order : orders) {
             System.out.println("order.status = " + order.getStatus());
         }
