@@ -8,7 +8,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +38,13 @@ public class Store {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime modifiedAt;
+
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menuList = new ArrayList<>();
 
@@ -44,6 +54,7 @@ public class Store {
         this.address = address;
         this.tel = tel;
         this.account = account;
+        this.createdAt = LocalDateTime.now();
     }
 
     public static Store of(StoreRequestDto requestDto, Account account) {
@@ -59,5 +70,6 @@ public class Store {
         this.name = storeRequestDto.getName();
         this.address = storeRequestDto.getAddress();
         this.tel = storeRequestDto.getTel();
+        this.modifiedAt = LocalDateTime.now();
     }
 }
