@@ -4,7 +4,6 @@ import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.MenuRepository;
 import com.example.mealserve.domain.menu.dto.MenuResponseDto;
 import com.example.mealserve.domain.menu.entity.Menu;
-import com.example.mealserve.domain.store.document.StoreDocument;
 import com.example.mealserve.domain.store.dto.StoreRequestDto;
 import com.example.mealserve.domain.store.dto.StoreResponseDto;
 import com.example.mealserve.domain.store.entity.Store;
@@ -24,7 +23,6 @@ import java.util.List;
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    private final StoreSearchRepository storeSearchRepository;
     private final MenuRepository menuRepository;
 
     @Transactional
@@ -33,7 +31,6 @@ public class StoreService {
         Store store = Store.of(storeRequestDto, account);
 
         Store savedStore = storeRepository.save(store);
-        storeSearchRepository.save(StoreDocument.from(savedStore));
 
         return StoreResponseDto.from(savedStore);
     }
@@ -43,7 +40,6 @@ public class StoreService {
         Store store = getStoreById(storeId);
 
         store.update(storeRequestDto);
-        storeSearchRepository.save(StoreDocument.from(store));
 
         return StoreResponseDto.from(store);
     }
