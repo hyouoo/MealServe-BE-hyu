@@ -100,8 +100,8 @@ public class OrderService {
         accountRepository.save(owner);
     }
 
-    private Store findStore(Long id) {
-        return storeRepository.findById(id).orElseThrow(() ->
+    private void findStore(Long id) {
+        storeRepository.findById(id).orElseThrow(() ->
                 new CustomException(ErrorCode.STORE_NOT_FOUND));
     }
 

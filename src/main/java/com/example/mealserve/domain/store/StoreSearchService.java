@@ -1,6 +1,6 @@
 //package com.example.mealserve.domain.store;
 //
-//import com.example.mealserve.domain.store.document.StoreDocument;
+//import com.example.mealserve.domain.store.entity.StoreDocument;
 //import com.example.mealserve.domain.store.dto.StoreResponseDto;
 //import com.example.mealserve.global.exception.CustomException;
 //import com.example.mealserve.global.exception.ErrorCode;
