@@ -40,6 +40,8 @@ dependencies {
 
 	// Elasticsearch 8.7.1, Spring-data-es 5.1.5 for Spring-boot 3.1.5
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	// Spring-WebSocket 6.0.13 Spring-boot 3.1.5
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

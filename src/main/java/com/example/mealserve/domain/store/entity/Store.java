@@ -1,7 +1,6 @@
 package com.example.mealserve.domain.store.entity;
 
 import com.example.mealserve.domain.account.entity.Account;
-import com.example.mealserve.domain.menu.entity.Menu;
 import com.example.mealserve.domain.store.dto.StoreRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -12,8 +11,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -44,9 +41,6 @@ public class Store {
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Menu> menuList = new ArrayList<>();
 
     @Builder
     private Store(String name, String address, String tel, Account account) {
