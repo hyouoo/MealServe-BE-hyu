@@ -45,8 +45,8 @@ public class Store {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Menu> menuList = new ArrayList<>();
+//    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<Menu> menuList = new ArrayList<>();
 
     @Builder
     private Store(String name, String address, String tel, Account account) {
