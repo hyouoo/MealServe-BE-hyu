@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisHash;
 import java.time.LocalDateTime;
 
 @Getter
-@RedisHash(value = "storehash", timeToLive = 30)
+@RedisHash(value = "storehash", timeToLive = 120)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StoreHash {
 

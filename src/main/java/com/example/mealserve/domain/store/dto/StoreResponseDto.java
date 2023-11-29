@@ -5,10 +5,14 @@ import com.example.mealserve.domain.store.entity.StoreDocument;
 import com.example.mealserve.domain.store.entity.Store;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
+
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StoreResponseDto {
 
