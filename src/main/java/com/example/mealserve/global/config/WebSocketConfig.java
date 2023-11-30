@@ -1,5 +1,6 @@
-package com.example.mealserve.global.websocket;
+package com.example.mealserve.global.config;
 
+import com.example.mealserve.global.websocket.AlarmHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

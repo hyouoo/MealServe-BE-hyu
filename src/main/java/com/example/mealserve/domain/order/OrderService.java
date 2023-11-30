@@ -103,8 +103,8 @@ public class OrderService {
         alarmHandler.sendNotification(customer.getEmail(), "배달이 완료되었습니다.");
     }
 
-    private void findStore(Long id) {
-        storeRepository.findById(id).orElseThrow(() ->
+    private Store findStore(Long id) {
+        return storeRepository.findById(id).orElseThrow(() ->
                 new CustomException(ErrorCode.STORE_NOT_FOUND));
     }
 
