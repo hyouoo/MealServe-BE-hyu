@@ -27,7 +27,6 @@ import java.util.List;
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    //    private final StoreSearchRepository storeSearchRepository;
     private final MenuRepository menuRepository;
 
     @Transactional

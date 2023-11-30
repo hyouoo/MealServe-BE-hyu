@@ -31,7 +31,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
-            "/graphiql", "/graphql", "/api/auth/**",
+            "/graphiql", "/graphql", "/api/auth/**", "/swagger/**",
             "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html"
     };
