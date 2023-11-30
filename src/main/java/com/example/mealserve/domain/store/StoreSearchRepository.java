@@ -1,6 +1,6 @@
 //package com.example.mealserve.domain.store;
 //
-//import com.example.mealserve.domain.store.document.StoreDocument;
+//import com.example.mealserve.domain.store.entity.StoreDocument;
 //import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 //import org.springframework.stereotype.Repository;
 //

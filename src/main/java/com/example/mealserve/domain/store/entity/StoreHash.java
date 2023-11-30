@@ -1,20 +1,21 @@
-package com.example.mealserve.domain.store.document;
+package com.example.mealserve.domain.store.entity;
 
-import com.example.mealserve.domain.store.entity.Store;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.redis.core.RedisHash;
+
+import java.time.LocalDateTime;
 
 @Getter
-@Document(indexName = "stores")
+@RedisHash(value = "storehash", timeToLive = 120)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StoreDocument {
+public class StoreHash {
 
     @Id
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -22,20 +23,23 @@ public class StoreDocument {
 
     private String tel;
 
+    private LocalDateTime createdAt;
+
     @Builder
-    private StoreDocument(Long id, String name, String address, String tel) {
-        this.id = id;
+    private StoreHash(String name, String address, String tel, LocalDateTime createdAt) {
         this.name = name;
         this.address = address;
         this.tel = tel;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public static StoreDocument from(Store store) {
-        return StoreDocument.builder()
-                .id(store.getId())
+    public static StoreHash from(Store store) {
+        return StoreHash.builder()
                 .name(store.getName())
                 .address(store.getAddress())
                 .tel(store.getTel())
                 .build();
     }
+
+
 }

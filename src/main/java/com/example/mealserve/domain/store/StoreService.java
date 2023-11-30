@@ -4,12 +4,15 @@ import com.example.mealserve.domain.account.entity.Account;
 import com.example.mealserve.domain.menu.MenuRepository;
 import com.example.mealserve.domain.menu.dto.MenuResponseDto;
 import com.example.mealserve.domain.menu.entity.Menu;
+import com.example.mealserve.domain.store.dto.RedisResponseDto;
 import com.example.mealserve.domain.store.dto.StoreRequestDto;
 import com.example.mealserve.domain.store.dto.StoreResponseDto;
 import com.example.mealserve.domain.store.entity.Store;
 import com.example.mealserve.global.exception.CustomException;
 import com.example.mealserve.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StoreService {
@@ -70,13 +74,15 @@ public class StoreService {
         return stores.map(StoreResponseDto::from);
     }
 
+    @Cacheable(value = "storeCash")
     @Transactional(readOnly = true)
-    public List<StoreResponseDto> getStoreByKeyword(String keyword) {
+    public RedisResponseDto getStoreByKeyword(String keyword) {
         List<Store> storeList = storeRepository.findAllByNameContaining(keyword);
         checkIfStoresExist(storeList);
-        return storeList.stream()
-                .map(StoreResponseDto::from)
-                .toList();
+
+        List<StoreResponseDto> storeResponseDtoList = storeList.stream()
+                .map(StoreResponseDto::from).toList();
+        return new RedisResponseDto(storeResponseDtoList);
     }
 
 
